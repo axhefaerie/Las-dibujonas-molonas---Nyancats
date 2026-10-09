@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using static IngredientComponent;
+using static ClientComponent;
 
 // Esta clase maneja la lógica del plato donde se van añadiendo los ingredientes y tal. 
 // Maneja la lógica de comprobar que los ingredientes sean una receta (para cambiar su sprite)
@@ -15,6 +16,7 @@ public class PlateComponent : MonoBehaviour
 
     public List<IngredientComponent> ingredients = new List<IngredientComponent>();     // Ingredientes del plato
     private RecipeComponent currentRecipe;          // Receta actual
+    private ClientComponent client;                // Cliente al que se le va a entregar el plato
 
     // Añade un ingrediente al plato (se llama desde DragAndDrop)
     public bool AddIngredient(IngredientComponent ingredient)
@@ -62,10 +64,37 @@ public class PlateComponent : MonoBehaviour
     }
 
     // Método que se llama al entregar el plato y qu7e comprueba si la receta está bien o mal con la que pide el cliente
-    public void Delivery()
+// Entrega el plato al cliente
+    
+    public void Delivery(ClientComponent client)
     {
-        // Al entregar un plato, se comprueba primero si forma una receta (nuevamente) y luego se comprueba si es la receta del cliente o no
-        // FALTA LA LOGICA DE ENTREGAR AL CLIENTE TODAVIA
+        Debug.Log("Se ha llamado a Delivery");
+
+        if (client == null)
+        {
+            Debug.Log("No se ha encontrado el cliente");
+            return;
+        }
+
+        // Buscamos la receta que forman los ingredientes
+        currentRecipe = recipeBook.FindRecipe(ingredients);
+
+        
+
+        Debug.Log("Receta preparada: " + currentRecipe.name);
+
+        bool correct = client.ReceivePlate(currentRecipe);
+
+        if (correct)
+        {
+            Debug.Log("Pedido correcto. Limpiando plato...");
+            ClearPlate();
+            currentRecipe = null;
+        }
+        else
+        {
+            Debug.Log("Pedido incorrecto. El plato no se limpia");
+        }
     }
 
     // Método que descarta el plato al tirarlo a la basura

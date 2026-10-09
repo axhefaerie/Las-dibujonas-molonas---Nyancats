@@ -9,7 +9,20 @@ public class DragPlate : Draggable
         RaycastHit2D hit = Physics2D.Raycast(GetMouseWorldPos(), Vector2.zero);     // Se comprueba si el collider del ingrediente ha dado con otro collider
         if (hit.collider != null)
         {
-            // FALTA Lógica de arrastrar al cliente
+            // LÓGICA DE ENTREGAR AL CLIENTE
+            ClientComponent client = hit.collider.GetComponentInParent<ClientComponent>();
+            if (client != null) { 
+                
+                PlateComponent plate = GetComponent<PlateComponent>(); 
+                
+                if (plate != null) { 
+                    plate.Delivery(client); 
+                } 
+                
+                ReturnToOrigin(); 
+                
+                return; 
+            }
 
             // Lógica de arrastrar a la basura
             TrashComponent trash = hit.collider.GetComponent<TrashComponent>();
