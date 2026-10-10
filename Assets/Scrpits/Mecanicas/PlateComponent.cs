@@ -21,24 +21,35 @@ public class PlateComponent : MonoBehaviour
     // Añade un ingrediente al plato (se llama desde DragAndDrop)
     public bool AddIngredient(IngredientComponent ingredient)
     {
-        // No permite añadir más de una base
+        //No permite añadir más de una base
         if (ingredient.type == IngredientType.Base || ingredient.type == IngredientType.Flower)
         {
-            if (ingredients.Exists(i => i.type == ingredient.type))     // Si ya existe ese tipo de ingrediente, devuelve false y no deja añadirlo al platp
+            if (ingredients.Exists(i => i.type == ingredient.type))//Si ya existe ese tipo de ingrediente, devuelve false y no deja  añadirlo al platp
                 return false;
         }
-        ingredients.Add(ingredient);    // Se añade el ingrediente al plato
-        RebuildPlate();                 // Se actualiza visualmente el plato
-        return true;        // Se devuelve true si se ha añadido
+
+        ingredients.Add(ingredient);// Se añade el ingrediente al plato
+        Debug.Log("Plato: " + GetInstanceID());
+        RebuildPlate();// Se actualiza visualmente el plato
+        return true; // Se devuelve true si se ha añadido
     }
 
     // Este método permite actualizar visualmente el plato al añadir un ingrediente
     private void RebuildPlate()
     {
         // Primero, comprueba si los ingredientes del plato actual forman una receta llamando al método FindRecipe
-        currentRecipe = recipeBook.FindRecipe(ingredients); 
+        currentRecipe = recipeBook.FindRecipe(ingredients);
+
+        // CAMBIO: eliminamos solamente los sprites anteriores
+        // Antes llamábamos a ClearPlate(), pero ese método también
+        // vaciaba la lista ingredientes y se perdía la receta o algo asi
+        // entonces ahora se guardan los ingredientes para darselos despues ak cliente
+        for (int i = ingredientParent.childCount - 1; i >= 0; i--)// borramos las IMAGENES de los ingredientes, son borrar los ingredientes de la lista, osea borramos lo visual solo
+        {
+            Destroy(ingredientParent.GetChild(i).gameObject);
+        }
         if (currentRecipe != null) {        // Si hay correspondencia (se ha formado un plato con los ingredientes de una receta)
-            ClearPlate();                   // Se vacían los sprites de los ingredientes
+                      // Se vacían los sprites de los ingredientes
             ShowSprite(currentRecipe.recipeSprite);     // Se llama al método ShowSprite para que aparezca el sprite de la receta final
         }
         else            // Si no hay una receta terminada con los ingredientes del plato, se muestran los ingreientes sin más
@@ -68,6 +79,7 @@ public class PlateComponent : MonoBehaviour
     
     public void Delivery(ClientComponent client)
     {
+
         Debug.Log("Se ha llamado a Delivery");
 
         if (client == null)
@@ -79,9 +91,13 @@ public class PlateComponent : MonoBehaviour
         // Buscamos la receta que forman los ingredientes
         currentRecipe = recipeBook.FindRecipe(ingredients);
 
-        
+        if (currentRecipe == null)
+        {
+            Debug.LogWarning("No se ha encontrado una receta para estos ingredientes.");
 
-        Debug.Log("Receta preparada: " + currentRecipe.name);
+            return;
+        }
+
 
         bool correct = client.ReceivePlate(currentRecipe);
 
