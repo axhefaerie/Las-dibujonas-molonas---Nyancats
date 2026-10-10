@@ -29,7 +29,6 @@ public class PlateComponent : MonoBehaviour
         }
 
         ingredients.Add(ingredient);// Se añade el ingrediente al plato
-        Debug.Log("Plato: " + GetInstanceID());
         RebuildPlate();// Se actualiza visualmente el plato
         return true; // Se devuelve true si se ha añadido
     }
@@ -79,9 +78,6 @@ public class PlateComponent : MonoBehaviour
     
     public void Delivery(ClientComponent client)
     {
-
-        Debug.Log("Se ha llamado a Delivery");
-
         if (client == null)
         {
             Debug.Log("No se ha encontrado el cliente");
@@ -103,20 +99,25 @@ public class PlateComponent : MonoBehaviour
 
         if (correct)
         {
-            Debug.Log("Pedido correcto. Limpiando plato...");
             ClearPlate();
             currentRecipe = null;
         }
         else
         {
-            Debug.Log("Pedido incorrecto. El plato no se limpia");
+            ClearPlate();
+            currentRecipe = null;
         }
     }
 
     // Método que descarta el plato al tirarlo a la basura
     public void ThrowAway()
     {
-        ClearPlate();   
+        ingredients.Clear();
+        // Borrado inmediato para que no queden sprites "fantasma" un frame
+        for (int i = ingredientParent.childCount - 1; i >= 0; i--)
+            DestroyImmediate(ingredientParent.GetChild(i).gameObject);
+        currentRecipe = null;
+        ClearPlate() ;
     }
 
     // Método que resetea el plato

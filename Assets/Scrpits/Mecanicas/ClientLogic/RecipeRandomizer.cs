@@ -16,10 +16,10 @@ public class RecipeRandomizer : MonoBehaviour
 {
     
     public RecipeBookComponent recipeBook;
-    //public TextMeshProUGUI recipeText; //Esto será para en el futuro configurar dialogos y esas cosas(?
-    //public SpriteRenderer clientSprite;
-
+    public GameObject balloon;
+    public TextMeshProUGUI recipeText; //Esto será para en el futuro configurar dialogos y esas cosas(?
     
+    //public SpriteRenderer clientSprite;
     //public Sprite happySprite;
     //public Sprite angrySprite;
 
@@ -46,6 +46,14 @@ public class RecipeRandomizer : MonoBehaviour
 
         requestedRecipe = recipeBook.recipes[randomIndex];
 
+        if (requestedRecipe != null && recipeText != null) {
+            recipeText.text = "Quiero " + requestedRecipe.name;
+        }
+        if (balloon != null)
+        {
+            balloon.SetActive(true);
+        }
+
         // Mostrar el nombre de la receta solicitada
         Debug.Log("Quiero " + requestedRecipe.name); 
 
@@ -64,6 +72,8 @@ public class RecipeRandomizer : MonoBehaviour
             Debug.Log("Cliente contento :D");
             //clientSprite.sprite = happySprite;
             orderCompleted = true;
+            if (balloon != null) 
+                balloon.SetActive(false);
             return true;
         }
         else

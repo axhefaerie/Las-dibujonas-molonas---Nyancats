@@ -28,10 +28,16 @@ public class DragPlate : Draggable
             TrashComponent trash = hit.collider.GetComponent<TrashComponent>();
             if (trash != null)
             {
-                GetComponent<PlateComponent>().ThrowAway();
+                PlateComponent plate = GetComponent<PlateComponent>();
+
+                if (plate != null)
+                {
+                    plate.ThrowAway();
+                }
                 ReturnToOrigin();
                 return;
             }
+            ReturnToOrigin();
         }
         ReturnToOrigin();
     }

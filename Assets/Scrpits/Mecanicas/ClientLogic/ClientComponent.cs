@@ -8,7 +8,15 @@ using static RecipeRandomizer;
 public class ClientComponent : MonoBehaviour
 {
     public RecipeRandomizer recipeRandomizer;
+    public CustomerSpawner spawner;
 
+    private void Start()
+    {
+        if (spawner == null)
+        {
+            spawner = FindObjectOfType<CustomerSpawner>();
+        }
+    }
     public bool ReceivePlate(RecipeComponent deliveredRecipe)
     {
         // Comprobamos que existe una receta entregada
@@ -29,7 +37,8 @@ public class ClientComponent : MonoBehaviour
         // Comparamos la receta entregada con la pedid
         if (deliveredRecipe == recipeRandomizer.requestedRecipe)
         {
-            Debug.Log("Cliente happy");
+            Debug.Log("Cliente happy. + 1000 pabo");
+            spawner.OnCustomerServed();     // LLama para que se genere un nuevo cliente
             return true;
         }
         else
